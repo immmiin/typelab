@@ -1,0 +1,12 @@
+import { open, S, L, check } from './lib.mjs'
+const { b, p, errs } = await open()
+const h0 = await L(p, 'Headline')
+await p.mouse.move(600, 420); await p.mouse.down(); await p.mouse.move(603, 300, { steps: 8 })
+await p.screenshot({ path: '/tmp/shots/snap.png' })
+await p.mouse.up()
+const h1 = await L(p, 'Headline')
+check(h1.x === h0.x, 'snapped to guide: x stays ' + h1.x)
+await p.mouse.move(1229, 61); await p.waitForTimeout(700)
+await p.screenshot({ path: '/tmp/shots/tip.png' })
+console.log('errors:', errs.join('\n'))
+await b.close()

@@ -1,0 +1,51 @@
+import { open, S, L, check } from './lib.mjs'
+const { b, p, errs } = await open()
+await p.mouse.click(600, 420)
+const id = (await L(p, 'Headline')).id
+// font change
+await p.locator('[data-testid="family-field"]').click(); await p.locator('[data-testid="font-fraunces"]').click()
+let h = await L(p, 'Headline')
+check(h.style.fontId === 'fraunces', 'font change to Fraunces')
+// variable axes: SOFT & WONK & wght via inputs
+await p.locator('[data-section="variable"]').scrollIntoViewIfNeeded()
+const soft = p.locator('[data-section="variable"] input[aria-label="SOFT"]')
+await soft.fill('100'); await soft.press('Enter')
+const wght = p.locator('[data-section="variable"] input[aria-label="wght"]')
+await wght.fill('300'); await wght.press('Enter')
+h = await L(p, 'Headline')
+check(h.style.axes.SOFT === 100 && h.style.weight === 300, `axes SOFT=${h.style.axes.SOFT} wght=${h.style.weight}`)
+const fvs = await p.locator('[data-testid="fvs"]').textContent()
+check(fvs.includes('"SOFT" 100') && fvs.includes('"wght" 300'), 'fvs string: ' + fvs)
+// rendered DOM has variation settings
+const rendered = await p.evaluate((id) => getComputedStyle(document.querySelector(`#gl-${id} tspan`)).fontVariationSettings, id)
+check(rendered.includes('SOFT'), 'rendered tspan font-variation-settings: ' + rendered)
+// keyboard arrow on number input
+await wght.focus(); await wght.press('ArrowUp'); await wght.press('Shift+ArrowUp')
+h = await L(p, 'Headline')
+check(h.style.weight === 311, 'arrow keys on number field -> ' + h.style.weight)
+// slider drag (size)
+const sl = p.locator('[data-section="text"] [role="slider"][aria-label="Size"]'); await sl.scrollIntoViewIfNeeded()
+const bb = await sl.boundingBox()
+await p.mouse.click(bb.x + bb.width * 0.25, bb.y + bb.height / 2)
+h = await L(p, 'Headline')
+check(Math.abs(h.style.size - 104) < 8, 'slider click sets size ~104 -> ' + h.style.size)
+// randomize axes
+await p.locator('[data-section="variable"] button:has-text("Randomize")').click()
+let h2 = await L(p, 'Headline')
+check(JSON.stringify(h2.style.axes) !== JSON.stringify(h.style.axes), 'randomize axes changed ' + JSON.stringify(h2.style.axes))
+await p.screenshot({ path: '/tmp/shots/09-fraunces.png' })
+// OpenType: switch to EB Garamond, toggle smcp, onum, swsh, ss01
+await p.locator('[data-testid="family-field"]').click(); await p.locator('[data-testid="font-ebgaramond"]').click()
+await p.evaluate(()=>document.querySelector('[data-section="text"] details').open=true); await p.locator('[data-section="text"] textarea').fill('Office 1/2 1234 Quest')
+await p.locator('[data-section="opentype"]').scrollIntoViewIfNeeded()
+for (const lab of ['Small caps', 'Oldstyle', 'Fractions', 'Swashes', 'Discretionary']) await p.locator(`[data-section="opentype"] button:has-text("${lab}")`).first().click()
+h = await L(p, 'Headline')
+check(h.style.features.smcp && h.style.features.onum && h.style.features.frac && h.style.features.swsh && h.style.features.dlig, 'features ' + JSON.stringify(h.style.features))
+const ffs = await p.evaluate((id) => getComputedStyle(document.querySelector(`#gl-${id} tspan`)).fontFeatureSettings, id)
+check(ffs.includes('smcp'), 'rendered font-feature-settings ' + ffs)
+// width of rendered text changes vs no features -> measure bbox width of the use element
+await p.screenshot({ path: '/tmp/shots/10-ot.png' })
+const disabledCount = await p.locator('[data-section="opentype"] button[disabled]').count()
+check(disabledCount > 10, 'unsupported features disabled: ' + disabledCount)
+console.log('errors:', errs.join('\n'))
+await b.close()

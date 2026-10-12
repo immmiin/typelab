@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TYPE LAB — monochrome instrument panel, off-white desk, one electric accent for active state.
+   Single deliberate light theme (a print-production tool), every colour set explicitly. */
+:root {
+  --paper: #fbfaf7;
+  --panel: #f7f6f2;
+  --desk: #e9e8e3;
+  --ink: #111111;
+  --mute: #6f6e69;
+  --faint: #a3a29c;
+  --line: #d9d8d2;
+  --hair: #ebeae5;
+  --hover: #efeee9;
+  --accent: #2b2bff;
+  --mono: 'tl-jetbrains', ui-monospace, SFMono-Regular, Menlo, monospace;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'tl-instrumentsans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+button {
+  cursor: default;
+}
+button:focus-visible,
+[role='slider']:focus-visible,
+select:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.tl-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.tl-scroll::-webkit-scrollbar-thumb {
+  background: #cfcec8;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.tl-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tl-kbd {
+  display: inline-block;
+  min-width: 20px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  padding: 1px 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.tl-caret {
+  animation: tl-blink 1.05s steps(1) infinite;
+}
+@keyframes tl-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.tl-slider:hover .tl-thumb,
+.tl-slider:focus-visible .tl-thumb {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-caret {
+    animation: none;
+  }
+}

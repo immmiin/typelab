@@ -1,0 +1,10 @@
+import { chromium } from 'playwright'
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } })
+const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type()==='error' && errs.push(m.text()))
+await p.goto('http://localhost:4173/wrapped.html')
+await p.waitForFunction(() => window.__typelab && window.__typelab.useFonts.getState().ready, null, { timeout: 15000 })
+await p.waitForTimeout(500)
+await p.screenshot({ path: '/tmp/shots/wrapped.png' })
+console.log('ok', errs)
+await b.close()
