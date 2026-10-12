@@ -125,9 +125,9 @@ export function TopBar() {
         </div>
       </div>
       <div className="flex h-full items-center gap-0 px-1 sm:px-2" role="tablist" aria-label="Mode">
-        {(['edit', 'specimen', 'compare'] as const).map((m) => (
+        {(['edit', 'make', 'specimen', 'compare'] as const).map((m) => (
           <button key={m} role="tab" aria-selected={mode === m} data-mode={m} onClick={() => set({ mode: m, editing: null })} className={`relative h-full px-2 text-2xs font-semibold uppercase tracking-[0.14em] sm:px-3 ${mode === m ? 'text-ink' : 'text-mute hover:text-ink'}`}>
-            {m === 'edit' ? 'Editor' : m}
+            {m === 'edit' ? 'Editor' : m === 'make' ? 'Font Maker' : m}
             {mode === m && <span className="absolute inset-x-2 bottom-0 h-[2px] bg-accent" />}
           </button>
         ))}
@@ -212,7 +212,7 @@ export function StatusBar() {
   if (mode !== 'edit')
     return (
       <footer className="flex h-7 shrink-0 items-center gap-3 border-t border-line bg-panel px-3 font-mono text-[10px] text-mute" data-testid="statusbar">
-        <span>{mode === 'specimen' ? 'Specimen sheet · generated from the font’s own tables' : 'Compare 2–4 typefaces · columns or overlay'}</span>
+        <span>{mode === 'specimen' ? 'Specimen sheet · generated from the font’s own tables' : mode === 'make' ? 'Font Maker · draw on the grid, shape the modules, export .otf · saved in this browser' : 'Compare 2–4 typefaces · columns or overlay'}</span>
         <span className="ml-auto">{fonts} typefaces</span>
       </footer>
     )

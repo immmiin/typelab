@@ -1,7 +1,7 @@
 export type Unit = 'px' | 'pt' | 'mm' | 'in'
 export type Tool = 'select' | 'type' | 'rotate' | 'scale' | 'warp' | 'path' | 'shape' | 'hand'
 export type ShapeKind = 'rect' | 'ellipse' | 'line'
-export type Mode = 'edit' | 'specimen' | 'compare'
+export type Mode = 'edit' | 'specimen' | 'compare' | 'make'
 export type BlendMode =
   | 'normal' | 'multiply' | 'screen' | 'overlay' | 'difference' | 'exclusion' | 'color-dodge' | 'color-burn'
 

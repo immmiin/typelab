@@ -9,6 +9,7 @@ import { StatusBar, Toolbar, TopBar, toolSelect } from './panels/Chrome'
 import { GlyphPanel, ShortcutsModal } from './panels/Modals'
 import { SpecimenView } from './modes/SpecimenView'
 import { CompareView } from './modes/CompareView'
+import { MakerView } from './modes/MakerView'
 import { nudge, reorder } from './actions'
 import { invalidateLayouts } from './engine/layout'
 import { Tooltips } from './ui/Tooltips'
@@ -49,6 +50,7 @@ export default function App() {
     const onKey = (e: KeyboardEvent) => {
       const s = S()
       if (isTyping(e)) return
+      if (s.mode === 'make') return
       const mod = e.metaKey || e.ctrlKey
       const k = e.key.toLowerCase()
       if (e.key === '?' || (mod && k === '/')) {
@@ -153,6 +155,8 @@ export default function App() {
               <Inspector />
             </div>
           </>
+        ) : mode === 'make' ? (
+          <main className="min-w-0 flex-1"><MakerView /></main>
         ) : mode === 'specimen' ? (
           <main className="min-w-0 flex-1"><SpecimenView /></main>
         ) : (
